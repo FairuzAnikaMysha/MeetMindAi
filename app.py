@@ -1,15 +1,13 @@
+%%writefile app.py
 
 import streamlit as st
 import google.generativeai as genai
-genai.configure(
-    api_key=st.secrets["GEMINI_API_KEY"]
-)
 import pdfplumber
 
 from report_generator import generate_pdf
 
-# API KEY
-genai.configure(api_key="YOUR_GEMINI_API_KEY")
+# Configure API Key. Please replace "YOUR_GEMINI_API_KEY" with your actual key.
+genai.configure(api_key="AQ.Ab8RN6IlD0sh9c-2TydsWvJ_Ot0kLwU81MUH16sxHk7q5BHbSg")
 
 model = genai.GenerativeModel("gemini-1.5-flash")
 
@@ -99,6 +97,29 @@ Meeting Notes:
     st.download_button(
         label="Download Report",
         data=pdf_file,
+        
         file_name="meeting_report.pdf",
         mime="application/pdf"
     )
+    %%writefile report_generator.py
+from fpdf import FPDF
+from io import BytesIO
+
+def generate_pdf(report_content: str) -> BytesIO:
+    pdf = FPDF()
+    pdf.add_page()
+    pdf.set_font("Arial", size=12)
+    # Split content by lines to fit within PDF page width
+    for line in report_content.split('\n'):
+        # Add a line break after each line to ensure proper formatting
+        pdf.multi_cell(0, 10, txt=line)
+    
+    # Save the PDF to a BytesIO object
+    pdf_output = BytesIO()
+    # FPDF.output(dest='S') returns the document as a byte string directly
+    # The double call to output() and then encode('latin1') is redundant and incorrect.
+    # We should just get the byte string once and write it.
+    pdf_bytes = pdf.output(dest='S').encode('latin1')
+    pdf_output.write(pdf_bytes)
+    pdf_output.seek(0)
+    return pdf_output
