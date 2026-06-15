@@ -5,7 +5,7 @@ import pdfplumber
 from report_generator import generate_pdf
 
 genai.configure(
-    api_key=st.secrets["GEMINI_API_KEY"]
+    api_key="AQ.Ab8RN6IlD0sh9c-2TydsWvJ_Ot0kLwU81MUH16sxHk7q5BHbSg"
 )
 
 model = genai.GenerativeModel("gemini-1.5-flash")
